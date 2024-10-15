@@ -6,13 +6,17 @@ class UserPreferences {
 
     String? name = prefs.getString('name');
     String? email = prefs.getString('email');
-    String? id = prefs.getString('id');
+    String? chat_id = prefs.getString('chat_id');
+    String? customer_id = prefs.getString('customer_id');
+    String? id = prefs.getString('Id');
     String? token = prefs.getString('token');
 
     return {
       'name': name,
       'email': email,
       'token': token,
+      'chat_id': chat_id,
+      'customer_id': customer_id,
       'id': id,
     };
   }

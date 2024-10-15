@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen1> {
         print(token);
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', true);
-        prefs.setString('id', id);
+        prefs.setString('Id', id);
         prefs.setString('token', token);
         Get.off(MainScreen());
       } else if (response.statusCode == 422) {

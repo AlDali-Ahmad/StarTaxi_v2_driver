@@ -15,7 +15,7 @@ import 'package:http/http.dart' as http;
 //   var userId = prefs.getString('userId');
 //   var token = prefs.getString('token');
 //   String apiUrl =
-//       'http://10.0.2.2:8000/api/get-taxi-location/$userId'; 
+//       'http://10.0.2.2:8000/api/get-taxi-location/$userId';
 
 //   try {
 //     // طلب إذن الوصول إلى الموقع
@@ -48,7 +48,7 @@ import 'package:http/http.dart' as http;
 //       headers: <String, String>{
 //         'Accept': 'application/json',
 //         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer $token', 
+//         'Authorization': 'Bearer $token',
 //       },
 //       body: jsonEncode(payload),
 //     );
@@ -139,7 +139,7 @@ class LocationService {
 
   static Future<void> sendLocationToDatabase() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userId = prefs.getString('userId');
+    var userId = prefs.getString('Id');
     var token = prefs.getString('token');
     String apiUrl = 'http://10.0.2.2:8000/api/get-taxi-location/$userId';
 
@@ -176,6 +176,7 @@ class LocationService {
       if (response.statusCode == 200) {
         print('تم إرسال بيانات الموقع بنجاح.');
       } else {
+        print(response.body);
         print('فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
       }
     } catch (e) {
@@ -188,7 +189,8 @@ class LocationService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var request_id = prefs.getString('request_id');
     var token = prefs.getString('token');
-    String apiUrl = 'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
+    String apiUrl =
+        'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
 
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -213,11 +215,12 @@ class LocationService {
 
       if (response.statusCode == 200) {
         print('تم إرسال بيانات الموقع بنجاح.');
-        stopSendingLocation(); 
+        stopSendingLocation();
         print('تم ايقاف الارسال ');
         Get.off(MainScreen());
       } else {
-        print('فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
+        print(
+            'فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
       }
     } catch (e) {
       print('حدث خطأ أثناء إرسال بيانات الموقع: $e');

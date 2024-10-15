@@ -482,6 +482,208 @@ try {
   }
 }*/
 
+
+
+
+
+
+/*
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // For making HTTP requests
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter WebSocket Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const WebSocketListener(),
+    );
+  }
+}
+
+class WebSocketListener extends StatefulWidget {
+  const WebSocketListener({super.key});
+
+  @override
+  _WebSocketListenerState createState() => _WebSocketListenerState();
+}
+
+class _WebSocketListenerState extends State<WebSocketListener> {
+  late WebSocketChannel _channel;
+  String _receivedMessage = 'No message received yet';
+  final String _token =
+      '23|ZdEqfb4jqPDC6Mz8sxV77Ltmd3u46knkEf7FXcXh6fa5045a'; // استبدل برمز الوصول الخاص بك
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Connect to the WebSocket
+    _connectToWebSocket();
+  }
+
+  void _connectToWebSocket() {
+    _channel = WebSocketChannel.connect(
+      Uri.parse(
+          'ws://10.0.2.2:8080/app/ni31bwqnyb4g9pbkk7sn?protocol=7&client=js&version=4.3.1'),
+    );
+
+    // Listen to the WebSocket stream
+    _channel.stream.listen(
+      (event) async {
+        print('Received event: $event');
+
+        // Handle the connection established event
+        if (event.contains('connection_established')) {
+          final decodedEvent = jsonDecode(event);
+          final decodeData = jsonDecode(decodedEvent['data']);
+          final socketId = decodeData['socket_id'];
+
+          // Authenticate with Laravel broadcasting/auth endpoint
+          const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+          final authResponse = await http.post(
+            Uri.parse(authUrl),
+            headers: {
+              'Authorization': 'Bearer $_token',
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: jsonEncode({
+              'channel_name': 'send-message.30d0483d-f616-4f01-9b53-38e292999757',
+              'socket_id': "$socketId"
+            }),
+          );
+
+          if (authResponse.statusCode == 200) {
+            final authData = jsonDecode(authResponse.body);
+            // Subscribe to the private channel with the auth signature
+            _channel.sink.add(jsonEncode({
+              "event": "pusher:subscribe",
+              "data": {
+                "channel": "send-message.30d0483d-f616-4f01-9b53-38e292999757",
+                "auth": authData['auth'].toString(),
+              },
+            }));
+          } else {
+            print('Failed to authenticate: ${authResponse.body}');
+          }
+        }
+
+        // Decode and handle other events
+        try {
+          final decodedEvent = jsonDecode(event);
+          if (decodedEvent is Map<String, dynamic>) {
+            print(decodedEvent);
+
+            if (decodedEvent.containsKey('event') &&
+                decodedEvent['event'] == 'sendMessage') {
+              setState(() {
+                final decodedData = jsonDecode(decodedEvent['data']);
+                _receivedMessage = decodedData['message'];
+              });
+            }
+          } else {
+            print('Unexpected data format: $decodedEvent');
+          }
+        } catch (e) {
+          print('Error decoding event: $e');
+        }
+      },
+      onError: (error) {
+        print('WebSocket error: $error');
+      },
+      onDone: () {
+        print('WebSocket connection closed');
+      },
+      cancelOnError: true,
+    );
+  }
+
+  void _sendMessage() {
+    if (_messageController.text.isNotEmpty) {
+      // Send message to Laravel
+      _channel.sink.add(jsonEncode({
+        'event': 'location.updated', // Event name
+        'channel': 'test.3473d276-df6f-4eb8-be0e-283ade38cb1a', // Channel name
+        'data': {
+          'message': _messageController.text,
+        },
+      }));
+
+      // Clear the text field after sending
+      _messageController.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    _messageController.dispose(); // Dispose the text controller
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('WebSocket Listener'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              _receivedMessage,
+              style: const TextStyle(fontSize: 24),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _messageController,
+              decoration: const InputDecoration(
+                labelText: 'Type your message here',
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _sendMessage,
+            child: const Text('Send Message'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:driver_taxi/components/custom_botton.dart';
@@ -489,6 +691,7 @@ import 'package:driver_taxi/components/custom_text.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:driver_taxi/utils/global.dart';
 import 'package:driver_taxi/location/location.dart';
+import 'package:driver_taxi/view/screen/auth/UserPreference.dart';
 import 'package:driver_taxi/view/screen/order.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -496,6 +699,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({Key? key}) : super(key: key);
@@ -518,12 +722,156 @@ class _NotificationsState extends State<Notifications> {
   void initState() {
     super.initState();
     fetchData();
+    loadUserData();
+  }
+
+  late WebSocketChannel _channel;
+  bool _isSnackbarVisible = false;
+  String? id;
+  String? _token;
+  String? _customer_id;
+  String? _chat_id;
+  int _reconnectAttempts = 0;
+  final int _maxReconnectAttempts = 5;
+  final Duration _reconnectDelay = Duration(seconds: 5);
+  Future<void> loadUserData() async {
+    Map<String, String?> userInfo = await UserPreferences.getUserInfo();
+    setState(() {
+      id = userInfo['id'];
+      _token = userInfo['token'];
+      _chat_id = userInfo['chat_id'];
+      _customer_id = userInfo['customer_id'];
+      if (id != null &&
+          _token != null &&
+          _customer_id != null &&
+          _customer_id != null) {
+        _connectToWebSocket();
+        // _connectToWebSocket2();
+        print('id:${id}');
+        print('_token:${_token}');
+        print('_chat_id:${_chat_id}');
+        print('_customer_id:${_customer_id}');
+      } else {
+        print('Failed to load user data: id or token is null');
+      }
+    });
+  }
+
+  void _connectToWebSocket() {
+    _reconnectAttempts = 0;
+    _channel = WebSocketChannel.connect(
+      Uri.parse(
+        'ws://10.0.2.2:8080/app/ni31bwqnyb4g9pbkk7sn?protocol=7&client=js&version=4.3.1',
+      ),
+    );
+
+    _channel.stream.listen(
+      (event) async {
+        print('Received event: $event');
+
+        // إذا تم تأسيس الاتصال
+        if (event.contains('connection_established')) {
+          final decodedEvent = jsonDecode(event);
+          final decodeData = jsonDecode(decodedEvent['data']);
+          final socketId = decodeData['socket_id'];
+          print('Socket ID 5551: $socketId');
+
+          const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+          final authResponse = await http.post(
+            Uri.parse(authUrl),
+            headers: {
+              'Authorization': 'Bearer $_token',
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(
+              {
+                'channel_name': 'send-message.${_chat_id}',
+                'socket_id': socketId
+              },
+            ),
+          );
+
+          if (authResponse.statusCode == 200) {
+            final authData = jsonDecode(authResponse.body);
+            print('Auth data: $authData');
+            _channel.sink.add(jsonEncode({
+              "event": "pusher:subscribe",
+              "data": {
+                "channel": "send-message.${_chat_id}",
+                "auth": authData['auth'].toString(),
+              },
+            }));
+          } else {
+            print('Failed to authenticate: ${authResponse.body}');
+          }
+        }
+
+        // معالجة الأحداث الأخرى
+        try {
+          final decodedEvent = jsonDecode(event);
+          print('Decoded event3231: $decodedEvent');
+          if (decodedEvent is Map<String, dynamic>) {
+            print('Decoded event:212121 $decodedEvent');
+
+            if (decodedEvent.containsKey('event') &&
+                decodedEvent['event'] == 'sendMessage') {
+              print('Decoded event:3131313 $decodedEvent');
+              if (mounted) {
+                setState(() {
+                  final data = jsonDecode(decodedEvent['data']);
+                  print(data);
+
+                  Get.snackbar(
+                    "",
+                    'sssssssssssssssssss'.tr,
+                    colorText: AppColors.white,
+                  );
+                  // playNotificationSound();
+                });
+              }
+            }
+          }
+        } catch (e) {
+          print('Error decoding event: $e');
+        }
+      },
+      onError: (error) {
+        print('WebSocket error: $error');
+      },
+      onDone: () {
+        print('WebSocket connection closed');
+        _reconnect();
+      },
+      cancelOnError: true,
+    );
+  }
+
+  void _reconnect() {
+    if (_reconnectAttempts < _maxReconnectAttempts) {
+      _reconnectAttempts++;
+      print('Attempting to reconnect... ($_reconnectAttempts)');
+      Future.delayed(_reconnectDelay, () {
+        _connectToWebSocket();
+      });
+    } else {
+      print('Max reconnect attempts reached. Giving up.');
+    }
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    // _channel2.sink.close();
+    super.dispose();
   }
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userId = prefs.getString('userId');
+    var userId = prefs.getString('Id');
     var token = prefs.getString('token');
+    print(userId);
+    print(token);
 
     if (userId == null || token == null) {
       print('خطأ: لم يتم العثور على userId أو token في SharedPreferences');
@@ -549,58 +897,59 @@ class _NotificationsState extends State<Notifications> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var responseBody = jsonDecode(response.body);
 
-        if (responseBody.containsKey("data") && responseBody["data"] != null) {
-          data = responseBody["data"];
-          var type = data["type"];
-          print(type);
+        // تحقق من وجود المفتاح "data" في الـ responseBody
+        if (responseBody != null && responseBody.isNotEmpty) {
+          setState(() {
+            data = responseBody;
+          });
           print('Data: $data');
 
-          // حفظ request_id و price في SharedPreferences
+          // حفظ المعلومات في SharedPreferences
           await prefs.setString('request_id', data['request_id']);
+          await prefs.setString('chat_id', data['chat_id']);
+          await prefs.setString('customer_id', data['customer_id']);
           await prefs.setDouble('price', data['price'].toDouble());
           await prefs.setString('typeMov', data['type']);
           await prefs.setString('is_onKM', data['is_onKM'].toString());
 
-          if (data.containsKey('request_id') &&
-              data.containsKey('location_lat') &&
-              data.containsKey('location_long')) {
-            final double locationLat = data['location_lat'] is double
-                ? data['location_lat']
-                : double.tryParse(data['location_lat'].toString()) ?? 0.0;
-            final double locationLong = data['location_long'] is double
-                ? data['location_long']
-                : double.tryParse(data['location_long'].toString()) ?? 0.0;
+          // التعامل مع الموقع وإضافة الـ Marker
+          final double locationLat = data['location_lat'] is double
+              ? data['location_lat']
+              : double.tryParse(data['location_lat'].toString()) ?? 0.0;
+          final double locationLong = data['location_long'] is double
+              ? data['location_long']
+              : double.tryParse(data['location_long'].toString()) ?? 0.0;
 
-            if (locationLat != 0.0 && locationLong != 0.0) {
-              // إضافة الـ Marker
-              setState(() {
-                markers.add(Marker(
-                  markerId: const MarkerId('customerLocation'),
-                  position: LatLng(locationLat, locationLong),
-                  infoWindow: InfoWindow(
-                    title: 'Customer Location',
-                    snippet: 'Lat: $locationLat, Long: $locationLong',
-                  ),
-                ));
+          if (locationLat != 0.0 && locationLong != 0.0) {
+            setState(() {
+              markers.add(Marker(
+                markerId: const MarkerId('customerLocation'),
+                position: LatLng(locationLat, locationLong),
+                infoWindow: InfoWindow(
+                  title: 'Customer Location',
+                  snippet: 'Lat: $locationLat, Long: $locationLong',
+                ),
+              ));
 
-                // تحريك الكاميرا إلى موقع الزبون
-                cameraPosition = CameraPosition(
-                  target: LatLng(locationLat, locationLong),
-                  zoom: 14.0,
+              cameraPosition = CameraPosition(
+                target: LatLng(locationLat, locationLong),
+                zoom: 14.0,
+              );
+
+              if (gms != null) {
+                gms!.animateCamera(
+                  CameraUpdate.newCameraPosition(cameraPosition),
                 );
-
-                // تحديث موضع الكاميرا في GoogleMapController
-                if (gms != null) {
-                  gms!.animateCamera(
-                    CameraUpdate.newCameraPosition(cameraPosition),
-                  );
-                }
-              });
-            } else {
-              print('خطأ: إحداثيات الموقع غير صالحة');
-            }
+              }
+            });
+          } else {
+            print('خطأ: إحداثيات الموقع غير صالحة');
           }
+        } else {
+          print('خطأ: البيانات غير موجودة');
         }
+      } else {
+        print('خطأ في الاستجابة: ${response.statusCode}');
       }
     } catch (error) {
       print('خطأ في جلب البيانات: $error');
@@ -687,7 +1036,8 @@ class _NotificationsState extends State<Notifications> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     CustomText(
-                                      text: "رقم الزبون: ${data['phone_number'].toString()}",
+                                      text:
+                                          "رقم الزبون: ${data['phone_number'].toString()}",
                                       alignment: Alignment.centerRight,
                                       color: Colors.white,
                                       fontSize: 16.0,
@@ -700,7 +1050,8 @@ class _NotificationsState extends State<Notifications> {
                                       fontSize: 16.0,
                                     ),
                                     CustomText(
-                                     text:  "نوع الرحلة: ${data['type'].toString()}",
+                                      text:
+                                          "نوع الرحلة: ${data['type'].toString()}",
                                       alignment: Alignment.centerRight,
                                       color: Colors.white,
                                       fontSize: 16.0,

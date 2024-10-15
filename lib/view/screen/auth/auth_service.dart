@@ -8,57 +8,57 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final Uri loginUrl = Uri.parse('${Url.url}api/login');
-  Future<Map<String, dynamic>?> loginUser(String email, String password) async {
-    final Map<String, dynamic> data = {
-      'email': email,
-      'password': password,
-    };
+  // Future<Map<String, dynamic>?> loginUser(String email, String password) async {
+  //   final Map<String, dynamic> data = {
+  //     'email': email,
+  //     'password': password,
+  //   };
 
-    try {
-      final response = await http.post(
-        loginUrl,
-        body: jsonEncode(data),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      );
+  //   try {
+  //     final response = await http.post(
+  //       loginUrl,
+  //       body: jsonEncode(data),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        final String token = responseData['data']['token'];
-        final String id = responseData['data']['user']['id'];
-        final String email = responseData['data']['user']['email'];
-        final String name = responseData['data']['user']['profile']['name'];
-        final String currentEmail = responseData['data']['user']['email'];
-        final String mail_code_verified_at =
-            responseData['data']['user']['mail_code_verified_at'];
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       final String token = responseData['data']['token'];
+  //       final String id = responseData['data']['user']['id'];
+  //       final String email = responseData['data']['user']['email'];
+  //       final String name = responseData['data']['user']['profile']['name'];
+  //       final String currentEmail = responseData['data']['user']['email'];
+  //       final String mail_code_verified_at =
+  //           responseData['data']['user']['mail_code_verified_at'];
 
-        // Save token and user data to SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', token);
-        prefs.setString('Id', id);
-        prefs.setString('name', name);
-        prefs.setString('email', email);
-        prefs.setString('email', currentEmail);
-        prefs.setString('mail_code_verified_at', mail_code_verified_at);
-        print('token zsssss:${token}');
-        return responseData;
-      } else if (response.statusCode == 422) {
-        return {
-          'error': 'Invalid email or password',
-        };
-      } else {
-        return {
-          'error': 'Server error: ${response.statusCode}',
-        };
-      }
-    } catch (error) {
-      return {
-        'error': 'Error occurred: $error',
-      };
-    }
-  }
+  //       // Save token and user data to SharedPreferences
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       prefs.setString('token', token);
+  //       prefs.setString('Id', id);
+  //       prefs.setString('name', name);
+  //       prefs.setString('email', email);
+  //       prefs.setString('email', currentEmail);
+  //       prefs.setString('mail_code_verified_at', mail_code_verified_at);
+  //       print('token zsssss:${token}');
+  //       return responseData;
+  //     } else if (response.statusCode == 422) {
+  //       return {
+  //         'error': 'Invalid email or password',
+  //       };
+  //     } else {
+  //       return {
+  //         'error': 'Server error: ${response.statusCode}',
+  //       };
+  //     }
+  //   } catch (error) {
+  //     return {
+  //       'error': 'Error occurred: $error',
+  //     };
+  //   }
+  // }
 
   final String _baseUrl = '${Url.url}api';
 

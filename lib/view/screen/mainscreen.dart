@@ -479,6 +479,8 @@ class _MainScreenState extends State<MainScreen> {
   bool _isSnackbarVisible = false;
   String? id;
   String? _token;
+  // String? _customer_id;
+  // String? _chat_id;
 
   @override
   void initState() {
@@ -492,8 +494,11 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       id = userInfo['id'];
       _token = userInfo['token'];
+      // _chat_id = userInfo['chat_id'];
+      // _customer_id = userInfo['customer_id'];
       if (id != null && _token != null) {
         _connectToWebSocket();
+        // _connectToWebSocket2();
       } else {
         print('Failed to load user data: id or token is null');
       }
@@ -539,7 +544,7 @@ class _MainScreenState extends State<MainScreen> {
     final decodedEvent = jsonDecode(event);
     final decodeData = jsonDecode(decodedEvent['data']);
     final socketId = decodeData['socket_id'];
-    print('Socket ID: $socketId');
+    print('Socket ID1111: $socketId');
 
     const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
     final authResponse = await http.post(
@@ -646,11 +651,11 @@ class _MainScreenState extends State<MainScreen> {
     print('تم إرسال الموقع.');
   }
 
-  Future<void> sendStatusToDataBase(bool isOnDuty) async {
+  Future<void> sendStatusToDataBase(int stateParam) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     String apiUrl = 'http://10.0.2.2:8000/api/drivers/change-state';
-    int stateParam = isOnDuty ? 1 : 0;
+    // int stateParam = isOnDuty ? 1 : 0;
 
     final Map<String, dynamic> data = {
       'state': stateParam,
@@ -674,6 +679,141 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       print('حدث خطأ أثناء إرسال البيانات: $e');
     }
+  }
+
+  // late WebSocketChannel _channel2;
+  // String _receivedMessage = 'No message received yet';
+
+  // int _reconnectAttempts = 0;
+  // final int _maxReconnectAttempts = 5;
+  // final Duration _reconnectDelay = Duration(seconds: 5);
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadUserData();
+  // }
+
+  // Future<void> loadUserData2() async {
+  //   Map<String, String?> userInfo = await UserPreferences.getUserInfo();
+
+  //   setState(() {
+  //     id = userInfo['id'];
+  //     _token = userInfo['token'];
+  //     _chat_id = userInfo['chat_id'];
+  //     _customer_id = userInfo['customer_id'];
+  //     if (id != null && _token != null) {
+  //       _connectToWebSocket2();
+  //     } else {
+  //       print('Failed to load user data: id or token is null');
+  //     }
+  //   });
+  // }
+
+  // void _connectToWebSocket2() {
+  //   _reconnectAttempts = 0; 
+  //   _channel2 = WebSocketChannel.connect(
+  //     Uri.parse(
+  //       'ws://10.0.2.2:8080/app/ni31bwqnyb4g9pbkk7sn?protocol=7&client=js&version=4.3.1',
+  //     ),
+  //   );
+
+  //   _channel2.stream.listen(
+  //     (event) async {
+  //       print('Received event: $event');
+
+  //       // إذا تم تأسيس الاتصال
+  //       if (event.contains('connection_established')) {
+  //         final decodedEvent = jsonDecode(event);
+  //         final decodeData = jsonDecode(decodedEvent['data']);
+  //         final socketId = decodeData['socket_id'];
+  //         print('Socket ID: $socketId'); 
+
+  //         const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+  //         final authResponse = await http.post(
+  //           Uri.parse(authUrl),
+  //           headers: {
+  //             'Authorization': 'Bearer $_token',
+  //             'Accept': 'application/json',
+  //             'Content-Type': 'application/json',
+  //           },
+  //           body: jsonEncode(
+  //             {'channel_name': 'send-message.${_customer_id}', 'socket_id': socketId},
+  //           ),
+  //         );
+
+  //         if (authResponse.statusCode == 200) {
+  //           final authData = jsonDecode(authResponse.body);
+  //           print('Auth data: $authData');
+  //           _channel2.sink.add(jsonEncode({
+  //             "event": "pusher:subscribe",
+  //             "data": {
+  //               "channel": "send-message.${_customer_id}",
+  //               "auth": authData['auth'].toString(),
+  //             },
+  //           }));
+  //         } else {
+  //           print('Failed to authenticate: ${authResponse.body}');
+  //         }
+  //       }
+
+  //       // معالجة الأحداث الأخرى
+  //       try {
+  //         final decodedEvent = jsonDecode(event);
+  //         print('Decoded event3231: $decodedEvent');
+  //         if (decodedEvent is Map<String, dynamic>) {
+  //           print('Decoded event:212121 $decodedEvent');
+
+  //           if (decodedEvent.containsKey('event') &&
+  //               decodedEvent['event'] == 'sendMessage') {
+  //             print('Decoded event:3131313 $decodedEvent');
+  //             if (mounted) {
+  //               setState(() {
+  //                 final data = jsonDecode(decodedEvent['data']);
+
+                  
+  //                   Get.snackbar(
+  //                     "",
+  //                     'sssssssssssssssssss'.tr,
+  //                     colorText: AppColors.white,
+  //                   );
+  //                   playNotificationSound();
+                 
+  //               });
+  //             }
+  //           }
+  //         }
+  //       } catch (e) {
+  //         print('Error decoding event: $e');
+  //       }
+  //     },
+  //     onError: (error) {
+  //       print('WebSocket error: $error');
+  //     },
+  //     onDone: () {
+  //       print('WebSocket connection closed');
+  //       _reconnect();
+  //     },
+  //     cancelOnError: true,
+  //   );
+  // }
+
+  // void _reconnect() {
+  //   if (_reconnectAttempts < _maxReconnectAttempts) {
+  //     _reconnectAttempts++;
+  //     print('Attempting to reconnect... ($_reconnectAttempts)');
+  //     Future.delayed(_reconnectDelay, () {
+  //       _connectToWebSocket();
+  //     });
+  //   } else {
+  //     print('Max reconnect attempts reached. Giving up.');
+  //   }
+  // }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    // _channel2.sink.close();
+    super.dispose();
   }
 
   @override
@@ -730,7 +870,8 @@ class _MainScreenState extends State<MainScreen> {
                   onPressed: () {
                     setState(() {
                       _isOnDuty = !_isOnDuty;
-                      sendStatusToDataBase(_isOnDuty);
+                      // إرسال الحالة بناءً على القيمة الجديدة
+                      sendStatusToDataBase(_isOnDuty ? 0 : 1);
                     });
                   },
                   borderColor: _isOnDuty ? AppColors.orange2 : AppColors.grey,
@@ -743,7 +884,7 @@ class _MainScreenState extends State<MainScreen> {
                   fontSize: 14,
                   lodingColor:
                       _isOnDuty ? AppColors.white : AppColors.BackgroundColor,
-                  text: _isOnDuty ? 'انت في استراحة' : 'مستعد للرحلات',
+                  text: _isOnDuty ? 'مستعد للرحلات' : 'انت في استراحة',
                 ),
               ],
             ),
@@ -771,12 +912,12 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    // _timer.cancel();
-    _channel.sink.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // _timer.cancel();
+  //   _channel2.sink.close();
+  //   super.dispose();
+  // }
 }
 
 
