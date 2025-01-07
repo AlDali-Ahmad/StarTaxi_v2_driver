@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:driver_taxi/components/custom_text.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
-import 'package:driver_taxi/utils/url.dart';
 import 'package:driver_taxi/view/screen/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,7 +36,7 @@ class UserInfoPage extends StatelessWidget {
               return Text('Error: ${snapshot.error}');
             } else {
               final userData = snapshot.data!['data'];
-              print(userData);
+              log(userData);
               return Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Column(
@@ -67,7 +68,7 @@ class UserInfoPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        CustomText(
+                        const CustomText(
                           text: 'الاسم الكامل',
                           alignment: Alignment.centerRight,
                         ),
@@ -88,7 +89,7 @@ class UserInfoPage extends StatelessWidget {
                           readOnly: true,
                         ),
                         const SizedBox(height: 20),
-                        CustomText(
+                        const CustomText(
                           text: 'رقم الجوال',
                           alignment: Alignment.centerRight,
                         ),
@@ -109,7 +110,7 @@ class UserInfoPage extends StatelessWidget {
                           readOnly: true,
                         ),
                         const SizedBox(height: 20),
-                        CustomText(
+                        const CustomText(
                           text: 'البريد الإلكتروني',
                           alignment: Alignment.centerRight,
                         ),

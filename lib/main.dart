@@ -1,4 +1,3 @@
-import 'package:driver_taxi/test.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:driver_taxi/view/screen/auth/login.dart';
 import 'package:driver_taxi/view/screen/mainscreen.dart';
@@ -14,8 +13,8 @@ Future<void> main() async {
   sharepref = await SharedPreferences.getInstance();
   runApp(
     ScreenUtilInit(
-      designSize: Size(360, 690),
-      builder: (context, child) => MyApp(),
+      designSize: const Size(360, 690),
+      builder: (context, child) => const MyApp(),
     ),
   );
 }
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      locale: Locale('ar'),
+      locale: const Locale('ar'),
       theme: ThemeData(
         fontFamily:'Cairo',
         primaryColor: AppColors.primaryColor,
@@ -65,7 +64,7 @@ class _CheckLoginState extends State<CheckLogin> {
       setState(() {
         isLoggedIn = true;
       });
-      Get.off(MainScreen());
+      Get.off(const MainScreen());
     } else {
       Get.off(LoginScreen1());
     }
@@ -73,7 +72,7 @@ class _CheckLoginState extends State<CheckLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: CircularProgressIndicator(),
       ),

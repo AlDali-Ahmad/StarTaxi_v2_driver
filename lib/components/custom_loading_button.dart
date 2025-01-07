@@ -1,11 +1,14 @@
+import 'dart:async';
+
+import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_btn/loading_btn.dart';
-import '../utils/app_colors.dart';
 
-class LoadingButtonWidget extends StatelessWidget {
+class LoadingButtonWidget extends StatefulWidget {
   final String text;
-  final VoidCallback onPressed;
+  final FutureOr<void> Function() onPressed;
   final double? height;
   final double? width;
   final double? borderRadius;
@@ -18,7 +21,7 @@ class LoadingButtonWidget extends StatelessWidget {
   final FontWeight fontWeight;
 
   const LoadingButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.height,
@@ -31,79 +34,88 @@ class LoadingButtonWidget extends StatelessWidget {
     this.backgroundColor2 = AppColors.orange1,
     this.borderColor = AppColors.orange2,
     this.fontWeight = FontWeight.bold,
-  }) : super(key: key);
+  });
 
   @override
+  State<LoadingButtonWidget> createState() => _LoadingButtonWidgetState();
+}
+
+class _LoadingButtonWidgetState extends State<LoadingButtonWidget> {
+  bool _isLoading = false;
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onPressed();
-      },
-      child: Container(
-        height: height ?? 45.h,
-        width: width ?? double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [backgroundColor1, backgroundColor2],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return IgnorePointer(
+      ignoring: _isLoading,
+      child: InkWell(
+        onTap: widget.onPressed,
+        child: Container(
+          height: widget.height ?? 45.h,
+          width: widget.width ?? double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [widget.backgroundColor1, widget.backgroundColor2],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(widget.borderRadius!),
+            border: Border.all(
+              color: widget.borderColor,
+              width: 5.0,
+            ),
           ),
-          borderRadius: BorderRadius.circular(borderRadius!),
-          border: Border.all(
-            color: borderColor,
-            width: 5.0,
-          ),
-        ),
-        child: LoadingBtn(
-          height: height ?? 45.h,
-          width: (width ?? 200).w,
-          borderRadius: borderRadius!,
-          animate: false,
-          color: Colors.transparent,
-          roundLoadingShape: false,
-          loader: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [backgroundColor1, backgroundColor2],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+          child: LoadingBtn(
+            roundLoadingShape: false,
+            height: widget.height ?? 45.h,
+            width: (widget.width ?? 200).w,
+            borderRadius: widget.borderRadius!,
+            color: Colors.transparent,
+            loader: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [widget.backgroundColor1, widget.backgroundColor2],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(widget.borderRadius!),
               ),
-              borderRadius: BorderRadius.circular(borderRadius!),
-            ),
-            child:  CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(lodingColor),
-            ),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [backgroundColor1, backgroundColor2],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                strokeCap: StrokeCap.round,
+                valueColor: AlwaysStoppedAnimation<Color>(widget.lodingColor),
               ),
-              borderRadius: BorderRadius.circular(borderRadius!),
             ),
-            child: Center(
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: fontSize.sp,
-                  fontWeight: fontWeight,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [widget.backgroundColor1, widget.backgroundColor2],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(widget.borderRadius!),
+              ),
+              child: Center(
+                child: Text(
+                  widget.text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: widget.textColor,
+                    fontSize: widget.fontSize,
+                    fontWeight: widget.fontWeight,
+                  ),
                 ),
               ),
             ),
+            onTap: (startLoading, stopLoading, btnState) async {
+              if (btnState == ButtonState.idle) {
+                startLoading();
+                setState(() => _isLoading = true);
+                await widget.onPressed();
+                stopLoading();
+                setState(() => _isLoading = false);
+              }
+            },
           ),
-          onTap: (startLoading, stopLoading, btnState) async {
-            if (btnState == ButtonState.idle) {
-              startLoading();
-              await Future.delayed(const Duration(seconds: 1));
-              onPressed();
-              stopLoading();
-            }
-          },
         ),
       ),
     );
