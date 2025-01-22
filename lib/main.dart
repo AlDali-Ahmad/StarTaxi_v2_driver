@@ -1,6 +1,9 @@
+import 'package:driver_taxi/firebase_options.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
+import 'package:driver_taxi/utils/services/notification_service.dart';
 import 'package:driver_taxi/view/screen/auth/login.dart';
 import 'package:driver_taxi/view/screen/mainscreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +13,8 @@ SharedPreferences? sharepref;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  NotificationService().initialize();
   sharepref = await SharedPreferences.getInstance();
   runApp(
     ScreenUtilInit(
@@ -29,7 +34,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       locale: const Locale('ar'),
       theme: ThemeData(
-        fontFamily:'Cairo',
+        fontFamily: 'Cairo',
         primaryColor: AppColors.primaryColor,
         scaffoldBackgroundColor: AppColors.BackgroundColor,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
