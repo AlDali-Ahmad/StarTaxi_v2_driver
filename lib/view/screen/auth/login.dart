@@ -61,9 +61,12 @@ class _LoginScreenState extends State<LoginScreen1> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> loginUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? devicetoken = prefs.getString('device_token');
     final Map<String, dynamic> data = {
       'email': emailController.text,
       'password': passwordController.text,
+      'device_token': devicetoken ?? '',
     };
 
     final Uri url = Uri.parse(apiPathLogin);

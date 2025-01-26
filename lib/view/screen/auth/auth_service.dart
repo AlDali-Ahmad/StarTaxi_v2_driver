@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class AuthService {
   final Uri loginUrl = Uri.parse('${Url.url}api/login');
   // Future<Map<String, dynamic>?> loginUser(String email, String password) async {
@@ -68,12 +67,15 @@ class AuthService {
       required String password,
       required String passwordConfirmation,
       required String phoneNumber}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? devicetoken = prefs.getString('device_token');
     final Map<String, dynamic> data = {
       'name': name,
       'email': email,
       'password': password,
       'password_confirmation': passwordConfirmation,
       'phone_number': phoneNumber,
+      'device_token': devicetoken ?? '',
     };
 
     final Uri url = Uri.parse('$_baseUrl/register');
@@ -93,7 +95,8 @@ class AuthService {
         final String token = responseData['data']['token'];
         final String email = responseData['data']['user']['email'];
         final String name = responseData['data']['user']['profile']['name'];
-        final String mail_code_verified_at = responseData['data']['mail_code_verified_at'];
+        final String mail_code_verified_at =
+            responseData['data']['mail_code_verified_at'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
         await prefs.setString('email', email);
