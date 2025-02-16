@@ -41,7 +41,7 @@ class _OrderState extends State<Order> {
   //   var userId = prefs.getString('userId');
   //   try {
   //     var response = await http.get(
-  //       Uri.parse('http://10.0.2.2:8000/api/movements/driver-request/$userId'),
+  //       Uri.parse('https://tawsella.online/api/movements/driver-request/$userId'),
   //       headers: <String, String>{
   //         'Accept': 'application/json',
   //         'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ class _OrderState extends State<Order> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://10.0.2.2:8000/api/movements/found-customer/$requestId'),
+            'https://tawsella.online/api/movements/found-customer/$requestId'),
         headers: <String, String>{
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ class _OrderState extends State<Order> {
               onChanged: (value) async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 var typeMov = prefs.getString('typeMov');
-                bool _isInternalRequest = typeMov != 'طلب خارجي'; 
+                bool _isInternalRequest = typeMov != 'طلب خارجي';
                 setState(() {
                   if (_isInternalRequest) {
                     _price = prefs.getDouble('price') ?? 1.0;

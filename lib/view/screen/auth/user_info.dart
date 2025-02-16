@@ -54,7 +54,7 @@ class UserInfoPage extends StatelessWidget {
                               child: Image.network(
                                 userData['avatar'] != null &&
                                         userData['avatar'].isNotEmpty
-                                    ? 'http://10.0.2.2:8000${userData['avatar']}' 
+                                    ? 'https://tawsella.online/${userData['avatar']}'
                                     : 'assets/images/car1.png',
                                 height: 110.h,
                                 width: 120.w,

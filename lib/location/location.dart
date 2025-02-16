@@ -15,7 +15,7 @@ import 'package:http/http.dart' as http;
 //   var userId = prefs.getString('userId');
 //   var token = prefs.getString('token');
 //   String apiUrl =
-//       'http://10.0.2.2:8000/api/get-taxi-location/$userId';
+//       'https://tawsella.online/api/get-taxi-location/$userId';
 
 //   try {
 //     // طلب إذن الوصول إلى الموقع
@@ -71,7 +71,7 @@ import 'package:http/http.dart' as http;
 //     var request_id = prefs.getString('request_id');
 //     var token = prefs.getString('token');
 //     String apiUrl =
-//         'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
+//         'https://tawsella.online/api/movements/mark-completed/$request_id';
 
 //     try {
 //       // الحصول على الموقع الحالي
@@ -141,7 +141,7 @@ class LocationService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userId = prefs.getString('Id');
     var token = prefs.getString('token');
-    String apiUrl = 'http://10.0.2.2:8000/api/get-taxi-location/$userId';
+    String apiUrl = 'https://tawsella.online/api/get-taxi-location/$userId';
 
     try {
       PermissionStatus status = await Permission.location.request();
@@ -177,7 +177,8 @@ class LocationService {
         print('تم إرسال بيانات الموقع بنجاح.');
       } else {
         print(response.body);
-        print('فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
+        print(
+            'فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
       }
     } catch (e) {
       print('حدث خطأ أثناء إرسال بيانات الموقع: $e');
@@ -190,7 +191,7 @@ class LocationService {
     var request_id = prefs.getString('request_id');
     var token = prefs.getString('token');
     String apiUrl =
-        'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
+        'https://tawsella.online/api/movements/mark-completed/$request_id';
 
     try {
       Position position = await Geolocator.getCurrentPosition(

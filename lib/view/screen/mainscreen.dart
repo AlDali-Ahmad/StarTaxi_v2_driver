@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -112,7 +111,7 @@ class _MainScreenState extends State<MainScreen> {
     final socketId = decodeData['socket_id'];
     log('Socket ID1111: $socketId');
 
-    const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+    const authUrl = 'https://tawsella.online/api/broadcasting/auth';
     final authResponse = await http.post(
       Uri.parse(authUrl),
       headers: {
@@ -220,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> sendStatusToDataBase(int stateParam) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
-    String apiUrl = 'http://10.0.2.2:8000/api/drivers/change-state';
+    String apiUrl = 'https://tawsella.online/api/drivers/change-state';
     // int stateParam = isOnDuty ? 1 : 0;
 
     final Map<String, dynamic> data = {

@@ -91,7 +91,7 @@ class _NotificationsState extends State<Notifications> {
           final socketId = decodeData['socket_id'];
           log('Socket ID 5551: $socketId');
 
-          const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+          const authUrl = 'https://tawsella.online/api/broadcasting/auth';
           final authResponse = await http.post(
             Uri.parse(authUrl),
             headers: {
@@ -198,7 +198,8 @@ class _NotificationsState extends State<Notifications> {
 
     try {
       var response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/movements/driver-request/$userId'),
+        Uri.parse(
+            'https://tawsella.online/api/movements/driver-request/$userId'),
         headers: <String, String>{
           'Accept': 'application/json',
           'Content-Type': 'application/json',
