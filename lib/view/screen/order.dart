@@ -5,6 +5,7 @@ import 'package:driver_taxi/components/custom_botton.dart';
 import 'package:driver_taxi/components/custom_loading_button.dart';
 import 'package:driver_taxi/location/location.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -41,7 +42,7 @@ class _OrderState extends State<Order> {
   //   var userId = prefs.getString('userId');
   //   try {
   //     var response = await http.get(
-  //       Uri.parse('http://10.0.2.2:8000/api/movements/driver-request/$userId'),
+  //       Uri.parse('${Url.url}api/movements/driver-request/$userId'),
   //       headers: <String, String>{
   //         'Accept': 'application/json',
   //         'Content-Type': 'application/json',
@@ -84,8 +85,7 @@ class _OrderState extends State<Order> {
 
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2:8000/api/movements/found-customer/$requestId'),
+        Uri.parse('${Url.url}api/movements/found-customer/$requestId'),
         headers: <String, String>{
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ class _OrderState extends State<Order> {
           onPressed: () {
             Get.back();
           },
-          icon: const Icon(Icons.arrow_back, color: AppColors.orange1),
+          icon: const Icon(Icons.arrow_back, color: AppColors.blue1),
         ),
       ),
       body: Padding(
@@ -142,11 +142,11 @@ class _OrderState extends State<Order> {
                       sendStatusToDataBase(_isOnDuty);
                     });
                   },
-                  borderColor: _isOnDuty ? AppColors.orange2 : AppColors.grey,
+                  borderColor: _isOnDuty ? AppColors.blue2 : AppColors.grey,
                   backgroundColor1:
-                      _isOnDuty ? AppColors.orange1 : AppColors.white,
+                      _isOnDuty ? AppColors.blue1 : AppColors.white,
                   backgroundColor2:
-                      _isOnDuty ? AppColors.orange2 : AppColors.white,
+                      _isOnDuty ? AppColors.blue2 : AppColors.white,
                   textColor:
                       _isOnDuty ? AppColors.white : AppColors.BackgroundColor,
                   fontSize: 12,
@@ -163,11 +163,11 @@ class _OrderState extends State<Order> {
                       sendStatusToDataBase(_isOnDuty);
                     });
                   },
-                  borderColor: _isOnDuty ? AppColors.grey : AppColors.orange2,
+                  borderColor: _isOnDuty ? AppColors.grey : AppColors.blue2,
                   backgroundColor1:
-                      _isOnDuty ? AppColors.white : AppColors.orange1,
+                      _isOnDuty ? AppColors.white : AppColors.blue1,
                   backgroundColor2:
-                      _isOnDuty ? AppColors.white : AppColors.orange2,
+                      _isOnDuty ? AppColors.white : AppColors.blue2,
                   textColor:
                       _isOnDuty ? AppColors.BackgroundColor : AppColors.white,
                   fontSize: 12,
@@ -214,7 +214,7 @@ class _OrderState extends State<Order> {
               onChanged: (value) async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 var typeMov = prefs.getString('typeMov');
-                bool _isInternalRequest = typeMov != 'طلب خارجي'; 
+                bool _isInternalRequest = typeMov != 'طلب خارجي';
                 setState(() {
                   if (_isInternalRequest) {
                     _price = prefs.getDouble('price') ?? 1.0;

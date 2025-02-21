@@ -6,6 +6,7 @@ import 'package:driver_taxi/components/custom_text.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:driver_taxi/utils/global.dart';
 import 'package:driver_taxi/location/location.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:driver_taxi/view/screen/auth/UserPreference.dart';
 import 'package:driver_taxi/view/screen/order.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -91,9 +92,9 @@ class _NotificationsState extends State<Notifications> {
           final socketId = decodeData['socket_id'];
           log('Socket ID 5551: $socketId');
 
-          const authUrl = 'http://10.0.2.2:8000/api/broadcasting/auth';
+          // const authUrl = '${Url.url}api/broadcasting/auth';
           final authResponse = await http.post(
-            Uri.parse(authUrl),
+            Uri.parse('${Url.url}api/broadcasting/auth'),
             headers: {
               'Authorization': 'Bearer $_token',
               'Accept': 'application/json',
@@ -198,7 +199,7 @@ class _NotificationsState extends State<Notifications> {
 
     try {
       var response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/movements/driver-request/$userId'),
+        Uri.parse('${Url.url}api/movements/driver-request/$userId'),
         headers: <String, String>{
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -283,15 +284,15 @@ class _NotificationsState extends State<Notifications> {
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.orange1, AppColors.orange2],
+              colors: [AppColors.blue1, AppColors.blue2],
               begin: Alignment.topLeft,
               end: Alignment.topRight,
             ),
           ),
           child: AppBar(
-            title: CustomText(
+            title: const CustomText(
               text: 'طلباتي',
-              fontSize: 18.sp,
+              fontSize: 24,
               color: Colors.white,
               alignment: Alignment.topRight,
             ),
@@ -309,7 +310,7 @@ class _NotificationsState extends State<Notifications> {
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.orange1),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.blue1),
               ),
             )
           : Padding(
@@ -326,7 +327,7 @@ class _NotificationsState extends State<Notifications> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.orange1,
+                                color: AppColors.blue1,
                               ),
                               textDirection: TextDirection.rtl,
                             ),
@@ -335,8 +336,7 @@ class _NotificationsState extends State<Notifications> {
                               color: AppColors.BackgroundColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.0),
-                                side:
-                                    const BorderSide(color: AppColors.orange1),
+                                side: const BorderSide(color: AppColors.blue1),
                               ),
                               child: ListTile(
                                 title: Text(
@@ -408,7 +408,7 @@ class _NotificationsState extends State<Notifications> {
                           margin: const EdgeInsets.all(16.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
-                            side: const BorderSide(color: AppColors.orange2),
+                            side: const BorderSide(color: AppColors.blue2),
                           ),
                           elevation: 5,
                           child: const Padding(

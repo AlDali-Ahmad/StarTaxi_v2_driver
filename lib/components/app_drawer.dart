@@ -33,41 +33,41 @@ class AppDrawer extends StatelessWidget {
                   height: 100.h,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/t.png'), // استخدم صورة مخصصة
+                      image: AssetImage(
+                          'assets/images/t.png'), // استخدم صورة مخصصة
                       fit: BoxFit.scaleDown,
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 SizedBox(height: 10),
-                
               ],
             ),
           ),
           ListTile(
-            leading: Icon(Icons.person, color: AppColors.orange1),
+            leading: Icon(Icons.person, color: AppColors.blue1),
             title: Text(
               'ملفي الشخصي',
               style: TextStyle(
-                color: AppColors.orange1,
+                color: AppColors.blue1,
                 fontSize: 18,
               ),
             ),
-            tileColor: Colors.grey[100], 
+            tileColor: Colors.grey[100],
             onTap: () {
               Get.to(UserInfoPage());
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: AppColors.orange1),
+            leading: Icon(Icons.logout, color: AppColors.blue1),
             title: Text(
               'تسجيل الخروج',
               style: TextStyle(
-                color: AppColors.orange1,
+                color: AppColors.blue1,
                 fontSize: 18,
               ),
             ),
-            tileColor: Colors.grey[100], 
+            tileColor: Colors.grey[100],
             onTap: () {
               showDialog(
                 context: context,

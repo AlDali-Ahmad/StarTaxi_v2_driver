@@ -1,18 +1,18 @@
-const String apiPathLogin = 'http://10.0.2.2:8000/api/login';
+import 'package:driver_taxi/utils/url.dart';
 
-const String apiPath_Notifcations = 'http://10.0.2.2:8000/api/info/about-us';
+String apiPathLogin = '${Url.url}api/login';
 
-const String apiPath_offers = 'http://10.0.2.2:8000/api/offers';
+String apiPath_Notifcations = '${Url.url}api/info/about-us';
 
-const String apiPath_addition = 'http://10.0.2.2:8000/api/info/addition';
+String apiPath_offers = '${Url.url}api/offers';
 
-const String apiPath_equest =
-    'http://10.0.2.2:8000/api/movements/driver-request';
+String apiPath_addition = '${Url.url}api/info/addition';
 
-const String apiPath_OrderStatus = 'http://10.0.2.2:8000/api/drivers/set-state';
+String apiPath_equest = '${Url.url}api/movements/driver-request';
 
-const String apiPath_found_customer =
-    'http://10.0.2.2:8000/api/movements/found-customer';
+String apiPath_OrderStatus = '${Url.url}api/drivers/set-state';
 
-const String apiPath_Location =
-    'http://10.0.2.2:8000/api/make-is-completed/Asds-52664d66-aasd5566-C1';
+String apiPath_found_customer = '${Url.url}api/movements/found-customer';
+
+String apiPath_Location =
+    '${Url.url}api/make-is-completed/Asds-52664d66-aasd5566-C1';

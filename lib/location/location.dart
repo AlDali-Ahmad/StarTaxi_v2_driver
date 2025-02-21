@@ -4,6 +4,7 @@
 // // ignore: unused_import
 // import 'package:driver_taxi/view/screen/mainscreen.dart';
 // import 'package:get/get.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:http/http.dart' as http;
 // import 'package:geolocator/geolocator.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -15,7 +16,7 @@ import 'package:http/http.dart' as http;
 //   var userId = prefs.getString('userId');
 //   var token = prefs.getString('token');
 //   String apiUrl =
-//       'http://10.0.2.2:8000/api/get-taxi-location/$userId';
+//       '${Url.url}api/get-taxi-location/$userId';
 
 //   try {
 //     // طلب إذن الوصول إلى الموقع
@@ -71,7 +72,7 @@ import 'package:http/http.dart' as http;
 //     var request_id = prefs.getString('request_id');
 //     var token = prefs.getString('token');
 //     String apiUrl =
-//         'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
+//         '${Url.url}api/movements/mark-completed/$request_id';
 
 //     try {
 //       // الحصول على الموقع الحالي
@@ -141,7 +142,7 @@ class LocationService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userId = prefs.getString('Id');
     var token = prefs.getString('token');
-    String apiUrl = 'http://10.0.2.2:8000/api/get-taxi-location/$userId';
+    String apiUrl = '${Url.url}api/get-taxi-location/$userId';
 
     try {
       PermissionStatus status = await Permission.location.request();
@@ -177,7 +178,8 @@ class LocationService {
         print('تم إرسال بيانات الموقع بنجاح.');
       } else {
         print(response.body);
-        print('فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
+        print(
+            'فشل في إرسال بيانات الموقع. الرمز الحالة: ${response.statusCode}');
       }
     } catch (e) {
       print('حدث خطأ أثناء إرسال بيانات الموقع: $e');
@@ -189,8 +191,7 @@ class LocationService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var request_id = prefs.getString('request_id');
     var token = prefs.getString('token');
-    String apiUrl =
-        'http://10.0.2.2:8000/api/movements/mark-completed/$request_id';
+    String apiUrl = '${Url.url}api/movements/mark-completed/$request_id';
 
     try {
       Position position = await Geolocator.getCurrentPosition(

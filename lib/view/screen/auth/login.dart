@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:driver_taxi/components/custom_password_field.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:driver_taxi/components/customTextField.dart';
 import 'package:driver_taxi/components/custom_loading_button.dart';
@@ -17,7 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen1 extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen1> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen1> {
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen1> {
       'password': passwordController.text,
     };
 
-    final Uri url = Uri.parse(apiPathLogin);
+    final Uri url = Uri.parse('${Url.url}api/login');
     try {
       final response = await http.post(
         url,
@@ -157,28 +158,31 @@ class _LoginScreenState extends State<LoginScreen1> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("assets/images/car1.png", height: 70.h),
+                      Image.asset(
+                        "assets/images/logo_star_taxi.png",
+                        height: 300,
+                      ),
                       const CustomText(
                         text: 'صفحة تسجبل الدخول',
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                         alignment: Alignment.center,
-                        color: AppColors.iconColor,
+                        color: AppColors.textColor,
                       ),
                       SizedBox(height: 30.h),
                       CustomTextField(
                         controller: emailController,
-                        hintText: 'enter_your_email'.tr,
+                        hintText: 'ادخل البريد الالكتروني'.tr,
                         iconData: Icons.email,
                         iconColor: AppColors.iconColor,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email'.tr;
+                            return 'الرجاء إدخال البريد الإلكتروني الخاص بك';
                           }
                           final emailRegex =
                               RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
                           if (!emailRegex.hasMatch(value)) {
-                            return 'Please enter a valid email address'.tr;
+                            return 'يرجى إدخال عنوان بريد إلكتروني صالح';
                           }
                           return null;
                         },
@@ -188,11 +192,10 @@ class _LoginScreenState extends State<LoginScreen1> {
                         controller: passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password'.tr;
+                            return 'الرجاء إدخال كلمة المرور الخاصة بك';
                           }
                           if (value.length < 6) {
-                            return 'Password must be at least 6 characters long'
-                                .tr;
+                            return 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
                           }
                           return null;
                         },
@@ -200,7 +203,9 @@ class _LoginScreenState extends State<LoginScreen1> {
                       SizedBox(height: 15.h),
                       LoadingButtonWidget(
                         text: 'تسجيل الدخول',
+                        width: 300,
                         onPressed: () {
+                          log('message');
                           if (_formKey.currentState?.validate() ?? false) {
                             loginUser();
                           }
