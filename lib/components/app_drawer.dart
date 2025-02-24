@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:driver_taxi/components/custom_alert_dialog.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:driver_taxi/view/screen/auth/auth_service.dart';
@@ -7,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AppDrawer extends StatelessWidget {
-  AppDrawer();
+  const AppDrawer();
 
   @override
   Widget build(BuildContext context) {
@@ -16,58 +18,46 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange, Colors.deepOrange],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30.0),
-                bottomRight: Radius.circular(30.0),
-              ),
-            ),
             child: Column(
               children: [
                 Container(
                   height: 100.h,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/t.png'), // استخدم صورة مخصصة
+                    image: const DecorationImage(
+                      image: AssetImage('assets/images/logo_star_taxi.png'),
                       fit: BoxFit.scaleDown,
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                SizedBox(height: 10),
-                
+                const SizedBox(height: 10),
               ],
             ),
           ),
           ListTile(
-            leading: Icon(Icons.person, color: AppColors.orange1),
-            title: Text(
+            leading: const Icon(Icons.person, color: AppColors.blue1),
+            title: const Text(
               'ملفي الشخصي',
               style: TextStyle(
-                color: AppColors.orange1,
+                color: AppColors.blue1,
                 fontSize: 18,
               ),
             ),
-            tileColor: Colors.grey[100], 
+            tileColor: Colors.grey[100],
             onTap: () {
               Get.to(UserInfoPage());
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: AppColors.orange1),
-            title: Text(
+            leading: const Icon(Icons.logout, color: AppColors.blue1),
+            title: const Text(
               'تسجيل الخروج',
               style: TextStyle(
-                color: AppColors.orange1,
+                color: AppColors.blue1,
                 fontSize: 18,
               ),
             ),
-            tileColor: Colors.grey[100], 
+            tileColor: Colors.grey[100],
             onTap: () {
               showDialog(
                 context: context,
@@ -80,12 +70,13 @@ class AppDrawer extends StatelessWidget {
                     onCancel: () {
                       Get.back();
                     },
-                    onConfirm: () {
+                    onConfirm: () async {
                       try {
-                        AuthService.logout();
-                        print("Logged out successfully");
+                        await AuthService.logout();
+                        Get.back(); // إغلاق نافذة الحوار بعد تسجيل الخروج
                       } catch (error) {
-                        print("Error during logout: $error");
+                        Get.snackbar('خطأ', "Error during logout: $error");
+                        log("Error during logout: $error");
                       }
                     },
                     icon: Icons.logout,

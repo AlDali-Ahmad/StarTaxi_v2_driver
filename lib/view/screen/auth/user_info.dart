@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:driver_taxi/components/custom_text.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:driver_taxi/view/screen/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,13 +19,13 @@ class UserInfoPage extends StatelessWidget {
         backgroundColor: AppColors.BackgroundColor,
         title: const Text(
           'ملفي الشخصي',
-          style: TextStyle(color: Colors.amber),
+          style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
           onPressed: () {
             Get.back();
           },
-          icon: const Icon(Icons.arrow_back, color: AppColors.orange1),
+          icon: const Icon(Icons.arrow_back, color: AppColors.blue1),
         ),
       ),
       body: Center(
@@ -35,8 +37,13 @@ class UserInfoPage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              final userData = snapshot.data!['data'];
-              log(userData);
+              final userData = snapshot.data?['data'];
+              if (userData == null || userData is! Map<String, dynamic>) {
+                return const Text('Unexpected response format');
+              }
+
+              log(jsonEncode(userData)); // تصحيح تسجيل البيانات
+
               return Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Column(
@@ -54,14 +61,14 @@ class UserInfoPage extends StatelessWidget {
                               child: Image.network(
                                 userData['avatar'] != null &&
                                         userData['avatar'].isNotEmpty
-                                    ? 'https://tawsella.online/${userData['avatar']}'
-                                    : 'assets/images/car1.png',
+                                    ? '${Url.url}${userData['avatar']}'
+                                    : 'assets/images/logo_star_taxi.png',
                                 height: 110.h,
                                 width: 120.w,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Image.asset(
-                                    'assets/images/profileImage.jpeg',
+                                    'assets/images/car1.png',
                                   );
                                 },
                               ),
@@ -85,7 +92,7 @@ class UserInfoPage extends StatelessWidget {
                             filled: true,
                             fillColor: AppColors.textField_color,
                           ),
-                          initialValue: userData['name'],
+                          initialValue: userData['name'] ?? 'غير متوفر',
                           readOnly: true,
                         ),
                         const SizedBox(height: 20),
@@ -106,7 +113,7 @@ class UserInfoPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          initialValue: userData['phone_number'] ?? 'N/A',
+                          initialValue: userData['phone_number'] ?? 'غير متوفر',
                           readOnly: true,
                         ),
                         const SizedBox(height: 20),
@@ -127,18 +134,11 @@ class UserInfoPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          initialValue: userData['email'],
+                          initialValue: userData['email'] ?? 'غير متوفر',
                           readOnly: true,
                         ),
                       ],
                     ),
-                    // const SizedBox(height: 20),
-                    // LoadingButtonWidget(
-                    //   onPressed: () {
-                    //     // Get.to(() => EditProfilePage(userId: '${userData['id']}'));
-                    //   },
-                    //   text: 'Update User Info',
-                    // ),
                     const SizedBox(height: 20),
                   ],
                 ),

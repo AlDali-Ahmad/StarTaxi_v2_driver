@@ -3,11 +3,11 @@ import 'package:driver_taxi/utils/app_colors.dart';
 import 'package:driver_taxi/utils/services/notification_service.dart';
 import 'package:driver_taxi/view/screen/auth/login.dart';
 import 'package:driver_taxi/view/screen/mainscreen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 SharedPreferences? sharepref;
 

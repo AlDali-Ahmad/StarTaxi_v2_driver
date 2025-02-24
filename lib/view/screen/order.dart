@@ -5,6 +5,7 @@ import 'package:driver_taxi/components/custom_botton.dart';
 import 'package:driver_taxi/components/custom_loading_button.dart';
 import 'package:driver_taxi/location/location.dart';
 import 'package:driver_taxi/utils/app_colors.dart';
+import 'package:driver_taxi/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,14 +22,7 @@ class Order extends StatefulWidget {
 class _OrderState extends State<Order> {
   bool _isOnDuty = true;
   double _price = 0.0;
-  // final bool _isInternalRequest = true;
   final TextEditingController _kilometersController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // fetchData();
-  }
 
   @override
   void dispose() {
@@ -36,56 +30,24 @@ class _OrderState extends State<Order> {
     super.dispose();
   }
 
-  // Future<void> fetchData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var userId = prefs.getString('userId');
-  //   try {
-  //     var response = await http.get(
-  //       Uri.parse('https://tawsella.online/api/movements/driver-request/$userId'),
-  //       headers: <String, String>{
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json',
-  //       },
-  //     );
-  //     var responseBody = jsonDecode(response.body);
-  //     if (responseBody.containsKey("data")) {
-  //       var data = responseBody["data"];
-  //       if (response.statusCode == 200 || response.statusCode == 201) {
-  //         final String type = data['type'];
-  //         final String is_onKM = data['is_onKM'];
-  //         final double price = data['price'];
-  //         // طباعة البيانات للتحقق
-  //         print('نوع الطلب: $type');
-  //         print('المسافة بالكيلومترات: $is_onKM');
-  //         print('السعر لكل كيلومتر: $price');
-  //         setState(() {
-  //           _isInternalRequest = (type == 'طلب داخلي');
-  //           if (!_isInternalRequest) {
-  //             double kilometers = double.tryParse(is_onKM) ?? 0.0;
-  //             double priceNum = price ?? 0.0;
-  //             _price = kilometers * priceNum;
-  //           }
-  //         });
-  //       }
-  //     }
-  //   } catch (error) {
-  //     print('خطأ في جلب البيانات: $error');
-  //   }
-  // }
-
+  // إرسال حالة الطلب إلى الخادم
   Future<void> sendStatusToDataBase(bool isOnDuty) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var requestId = prefs.getString('request_id');
     var token = prefs.getString('token');
-    int stateParam = isOnDuty ? 1 : 0;
+
+    if (requestId == null || token == null) {
+      log('Error: request_id or token is null');
+      return;
+    }
+
     final Map<String, dynamic> data = {
-      'state': stateParam,
+      'state': isOnDuty ? 1 : 0,
     };
 
     try {
       final response = await http.post(
-        Uri.parse(
-            'https://tawsella.online/api/movements/found-customer/$requestId'),
+        Uri.parse('${Url.url}api/movements/found-customer/$requestId'),
         headers: <String, String>{
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -95,18 +57,39 @@ class _OrderState extends State<Order> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        log('success');
-        // CustomSnackbar.show(
-        //   context,
-        //   'تم  انهاء الرحلة الرجاء الانتظار بينما ياتيك طلب اخر '.tr,
-        // );
-        // Get.off(() => const MainScreen());
+        log('Status sent successfully');
+        // إظهار رسالة نجاح أو تنقل إلى صفحة أخرى
       } else {
-        log('فشل في إرسال البيانات. الرمز الحالة: ${response.statusCode}');
+        log('Failed to send status. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      log('حدث خطأ أثناء إرسال البيانات: $e');
+      log('Error sending status: $e');
     }
+  }
+
+  // تحديث السعر بناءً على الكيلومترات المدخلة
+  void _updatePrice(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var typeMov = prefs.getString('typeMov');
+    bool isInternalRequest = typeMov != 'طلب خارجي';
+
+    log('typeMov: $typeMov');
+    log('isInternalRequest: $isInternalRequest');
+    log('price from prefs: ${prefs.getDouble('price')}');
+    log('Input value: $value');
+
+    double kilometers = double.tryParse(value) ?? 0.0;
+    log('Parsed kilometers: $kilometers');
+
+    setState(() {
+      if (isInternalRequest) {
+        _price = prefs.getDouble('price') ?? 1.0;
+      } else {
+        double price = prefs.getDouble('price') ?? 1.0;
+        _price = kilometers * price;
+      }
+      log('Updated price: $_price');
+    });
   }
 
   @override
@@ -115,14 +98,11 @@ class _OrderState extends State<Order> {
       appBar: AppBar(
         title: const Text(
           'صفحة الطلب',
-          style: TextStyle(color: Colors.amber),
         ),
         backgroundColor: AppColors.BackgroundColor,
         leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(Icons.arrow_back, color: AppColors.orange1),
+          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back, color: AppColors.blue1),
         ),
       ),
       body: Padding(
@@ -130,70 +110,42 @@ class _OrderState extends State<Order> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // أزرار حالة الطلب
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                LoadingButtonWidget(
-                  width: 150.w,
-                  height: 35.h,
-                  onPressed: () {
-                    setState(() {
-                      _isOnDuty = true;
-                      sendStatusToDataBase(_isOnDuty);
-                    });
-                  },
-                  borderColor: _isOnDuty ? AppColors.orange2 : AppColors.grey,
-                  backgroundColor1:
-                      _isOnDuty ? AppColors.orange1 : AppColors.white,
-                  backgroundColor2:
-                      _isOnDuty ? AppColors.orange2 : AppColors.white,
-                  textColor:
-                      _isOnDuty ? AppColors.white : AppColors.BackgroundColor,
-                  fontSize: 12,
-                  lodingColor:
-                      _isOnDuty ? AppColors.white : AppColors.BackgroundColor,
+                _buildStatusButton(
                   text: 'تم العثور على الزبون',
-                ),
-                LoadingButtonWidget(
-                  width: 150.w,
-                  height: 35.h,
+                  isSelected: _isOnDuty,
                   onPressed: () {
-                    setState(() {
-                      _isOnDuty = false;
-                      sendStatusToDataBase(_isOnDuty);
-                    });
+                    setState(() => _isOnDuty = true);
+                    sendStatusToDataBase(_isOnDuty);
                   },
-                  borderColor: _isOnDuty ? AppColors.grey : AppColors.orange2,
-                  backgroundColor1:
-                      _isOnDuty ? AppColors.white : AppColors.orange1,
-                  backgroundColor2:
-                      _isOnDuty ? AppColors.white : AppColors.orange2,
-                  textColor:
-                      _isOnDuty ? AppColors.BackgroundColor : AppColors.white,
-                  fontSize: 12,
-                  lodingColor:
-                      _isOnDuty ? AppColors.white : AppColors.BackgroundColor,
+                ),
+                _buildStatusButton(
                   text: 'لم يتم العثور على الزبون',
+                  isSelected: !_isOnDuty,
+                  onPressed: () {
+                    setState(() => _isOnDuty = false);
+                    sendStatusToDataBase(_isOnDuty);
+                  },
                 ),
               ],
             ),
             SizedBox(height: 8.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomButton(
-                  width: 295.h,
-                  height: 35.h,
-                  onPressed: () {},
-                  background_color1: AppColors.white,
-                  background_color2: AppColors.white,
-                  border_color: AppColors.grey,
-                  text: 'السعر: $_price',
-                  textColor: AppColors.BackgroundColor,
-                ),
-              ],
+            // عرض السعر
+            CustomButton(
+              width: 295.h,
+              height: 35.h,
+              onPressed: () {},
+              background_color1: AppColors.white,
+              background_color2: AppColors.white,
+              border_color: AppColors.grey,
+              text: 'السعر: $_price',
+              textColor: AppColors.BackgroundColor,
             ),
             const SizedBox(height: 20),
+            // حقل إدخال الكيلومترات
             TextField(
               controller: _kilometersController,
               decoration: InputDecoration(
@@ -211,22 +163,10 @@ class _OrderState extends State<Order> {
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              onChanged: (value) async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                var typeMov = prefs.getString('typeMov');
-                bool _isInternalRequest = typeMov != 'طلب خارجي';
-                setState(() {
-                  if (_isInternalRequest) {
-                    _price = prefs.getDouble('price') ?? 1.0;
-                  } else {
-                    double kilometers = double.tryParse(value) ?? 0.0;
-                    double price = prefs.getDouble('price') ?? 1.0;
-                    _price = kilometers * price;
-                  }
-                });
-              },
+              onChanged: _updatePrice,
             ),
             const Spacer(),
+            // زر إنهاء الرحلة
             LoadingButtonWidget(
               onPressed: () {
                 double kilometers =
@@ -235,10 +175,29 @@ class _OrderState extends State<Order> {
                 _kilometersController.clear();
               },
               text: 'قم بانهاء الرحلة',
-            )
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  // بناء زر حالة الطلب
+  Widget _buildStatusButton({
+    required String text,
+    required bool isSelected,
+    required VoidCallback onPressed,
+  }) {
+    return LoadingButtonWidget(
+      width: 150.w,
+      height: 35.h,
+      onPressed: onPressed,
+      borderColor: isSelected ? AppColors.blue2 : AppColors.grey,
+      backgroundColor1: isSelected ? AppColors.blue1 : AppColors.white,
+      backgroundColor2: isSelected ? AppColors.blue2 : AppColors.white,
+      textColor: isSelected ? AppColors.white : AppColors.BackgroundColor,
+      fontSize: 12,
+      text: text,
     );
   }
 }

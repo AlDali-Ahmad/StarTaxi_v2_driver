@@ -1,19 +1,18 @@
-const String apiPathLogin = 'https://tawsella.online/api/login';
+import 'package:driver_taxi/utils/url.dart';
 
-const String apiPath_Notifcations = 'https://tawsella.online/api/info/about-us';
+String apiPathLogin = '${Url.url}api/login';
 
-const String apiPath_offers = 'https://tawsella.online/api/offers';
+String apiPath_Notifcations = '${Url.url}api/info/about-us';
 
-const String apiPath_addition = 'https://tawsella.online/api/info/addition';
+String apiPath_offers = '${Url.url}api/offers';
 
-const String apiPath_equest =
-    'https://tawsella.online/api/movements/driver-request';
+String apiPath_addition = '${Url.url}api/info/addition';
 
-const String apiPath_OrderStatus =
-    'https://tawsella.online/api/drivers/set-state';
+String apiPath_equest = '${Url.url}api/movements/driver-request';
 
-const String apiPath_found_customer =
-    'https://tawsella.online/api/movements/found-customer';
+String apiPath_OrderStatus = '${Url.url}api/drivers/set-state';
 
-const String apiPath_Location =
-    'https://tawsella.online/api/make-is-completed/Asds-52664d66-aasd5566-C1';
+String apiPath_found_customer = '${Url.url}api/movements/found-customer';
+
+String apiPath_Location =
+    '${Url.url}api/make-is-completed/Asds-52664d66-aasd5566-C1';
